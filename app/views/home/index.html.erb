@@ -1,1 +1,14 @@
-<h1 class="text-3xl font-semibold text-black">Hello PlayHeroes. Lets learn <%= @name %></h1>
+<div class="relative h-screen w-screen bg-cover bg-center bg-no-repeat" style="background-image: url('<%= asset_url("PlayHeroesLandingPage.png") %>');">
+
+    <!-- Content on Top -->
+    <div class="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-6">
+        <h1 class="text-6xl font-bold">Play. Connect. Track.</h1>
+        <h2 class="text-4xl mt-2  font-bold">Elevate your game with PlayHeroes!</h2>
+        <p class="text-lg mt-2  max-w-2xl font-semibold">
+            Find players, join tournaments, share your moments and </br> track your fitness! - all in one place
+        </p>
+        <button class="mt-6 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer">
+            Get Started
+        </button>
+    </div>
+</div>
