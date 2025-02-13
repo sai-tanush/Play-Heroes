@@ -1,26 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 
-const defaultTheme = require('tailwindcss/defaultTheme')
-const colors = require('tailwindcss/colors')
+const defaultTheme = require('tailwindcss/defaultTheme');
+const colors = require('tailwindcss/colors');
 
 module.exports = {
   content: [
-    './public/*.html',
+    './app/views/**/*.html.erb',
     './app/helpers/**/*.rb',
-    './app/javascript/**/*.js',
-    './app/views/**/*.{erb,haml,html,slim}'
+    './app/javascript/**/*.{js,jsx,ts,tsx}',
+    './app/assets/stylesheets/**/*.css'
   ],
   theme: {
-    colors: {
-      ...colors,
-      primary: {
-        DEFAULT: '#28CB8B',
-      },
-      secondary:{
-        DEFAULT: '#263238'
-      }
-    },
     extend: {
+      colors: {
+        primary: '#28CB8B',
+        secondary: '#263238'
+      },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
@@ -34,5 +29,5 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/typography'),
     require('@tailwindcss/container-queries'),
-  ]
-}
+  ],
+};
