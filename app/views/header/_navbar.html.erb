@@ -17,22 +17,23 @@
                 </button>
             </div>
             <div class="w-[100%] flex items-center justify-around lg:gap-[14rem] sm:items-stretch sm:justify-start">
-                <div class="flex shrink-0 items-center">
-                    <img class="h-8 w-auto" src="<%= asset_path('Icon.png') %>" alt="Play Heroes">
-                    <p class="text-3xl font-semibold ml-1">PlayHeroes</p>
-                </div>
-                <div class="mt-5 sm:ml-6 sm:block">
-                    <div class="flex space-x-4">
-                        <a href="#" class="rounded-md px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-700 hover:text-white">Play</a>
-                        <a href="#" class="rounded-md px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-700 hover:text-white">Moments</a>
-                        <a href="#" class="rounded-md px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-700 hover:text-white">Profile</a>
-                    </div>
+                <%= link_to root_path, class: "flex shrink-0 items-center" do %>
+                <img class="h-8 w-auto" src="<%= asset_path('Icon.png') %>" alt="Play Heroes">
+                <p class="text-3xl font-semibold ml-1">PlayHeroes</p>
+                <% end %>
+
+                <div class="mt-8 sm:ml-6 sm:block">
+                    <ul class="flex space-x-4">
+                        <li><%= link_to "Play", play_path, class: "rounded-md px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-700 hover:text-white" %></li>
+                        <li><%= link_to "Moments", moments_path, class: "rounded-md px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-700 hover:text-white" %></li>
+                        <li><%= link_to "Profile", profile_path, class: "rounded-md px-3 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-700 hover:text-white" %></li>
+                    </ul>
                 </div>
                 </p>
                 <div class="absolute  inset-y-0 right-0 flex items-center mb-6 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                    <button class="mt-6 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer">
-                        Login
-                    </button>
+                    <%= link_to login_path, class:"mt-6 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer" do %>
+                    Login
+                    <% end %>
                 </div>
 
 
