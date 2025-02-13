@@ -18,6 +18,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 gem "tailwindcss-ruby", "~> 4.0"
 gem "tailwindcss-rails", "~> 4.0"
+gem 'devise'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
