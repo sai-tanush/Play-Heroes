@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get "pages/play"
-  get "pages/moments"
   get "home/index"
   root "home#index"
   get "/play", to: "pages#play"
