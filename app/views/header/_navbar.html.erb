@@ -33,15 +33,16 @@
                 <div class="absolute inset-y-0 right-0 flex items-center mb-6 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                     <% if controller_name == "sessions" && action_name == "new" %>
                     <!-- If on login page, show Sign Up button -->
-                    <%= link_to "Sign Up", "/users/sign_up", class: "mt-6 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer" %>
+                    <%= link_to "Sign Up", new_user_registration_path, class: "mt-6 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer" %>
 
                     <% elsif (controller_name == "registrations" && action_name == "new") || controller_name == "home" %>
                     <!-- If on signup page, show Login button -->
-                    <%= link_to "Login", "/users/sign_in", class: "mt-6 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer" %>
+                    <%= link_to "Login", new_user_session_path, class: "mt-6 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer" %>
+                    <% end %>
 
-                    <% else %>
                     <!-- Default (If user is on other pages, show Logout or Profile) -->
-                    <%= link_to "Logout", "/users/sign_in", method: :delete, class: "mt-6 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer" %>
+                    <% if user_signed_in? && controller_name != "home" %>
+                    <%= link_to "Logout", destroy_user_session_path, data: {"turbo-method": :delete }, class: "mt-6 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg cursor-pointer" %>
                     <% end %>
                 </div>
 
