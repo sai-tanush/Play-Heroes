@@ -1,0 +1,32 @@
+<div class="relative h-screen w-screen flex justify-center items-center bg-cover bg-center bg-no-repeat" style="background-image: url('<%= asset_url("PlayHeroesLandingPage.png") %>');">
+
+    <div class="w-full lg:w-1/5 flex flex-col justify-center items-center py-6 px-6 gap-5 bg-white text-black rounded-xl shadow-lg">
+        <h2 class="text-4xl font-bold self-start">Log in</h2>
+
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <div class="w-80">
+            <%= f.label :email, class: "w-full block text-sm font-medium text-gray-700" %><br />
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Enter your email", class: "-mt-5 block w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500" %>
+        </div>
+
+        <div class="w-80 mt-5">
+            <%= f.label :password, class: "w-full block text-sm font-medium text-gray-700" %><br />
+            <%= f.password_field :password, autocomplete: "current-password", placeholder: "Enter your password", class: "-mt-5 block w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500" %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+        <div class="w-80 mt-3 flex items-center">
+            <%= f.check_box :remember_me, class: "h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500" %>
+            <%= f.label :remember_me, class: "ml-2 text-sm text-gray-700 cursor-pointer" %>
+        </div>
+        <% end %>
+
+        <div class="w-full mt-5">
+            <%= f.submit "Log in", class: "w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition duration-200" %>
+        </div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+    </div>
+
+</div>
