@@ -8,6 +8,8 @@ Rails.application.routes.draw do
     get "/play", to: "pages#play"
     get "/moments", to: "pages#moments"
     get "/profile", to: "users#profile"
+    get "/profile/edit", to: "users#edit", as: "edit_profile"
+    patch "/profile", to: "users#update", as: :update_profile
   end
 
 end
