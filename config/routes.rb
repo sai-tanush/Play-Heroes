@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   authenticate :user do
     get "/play", to: "pages#play"
     get "/moments", to: "pages#moments"
+    get "/track", to: "pages#track"
     get "/profile", to: "users#profile"
     get "/profile/edit", to: "users#edit", as: "edit_profile"
     patch "/profile", to: "users#update", as: :update_profile
