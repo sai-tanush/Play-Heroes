@@ -19,6 +19,8 @@ gem "thruster", require: false
 gem "tailwindcss-ruby", "~> 4.0"
 gem "tailwindcss-rails", "~> 4.0"
 gem 'devise'
+gem 'rack-livereload'
+
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
