@@ -4,4 +4,7 @@ class PagesController < ApplicationController
 
   def moments
   end
+
+  def track
+  end
 end
