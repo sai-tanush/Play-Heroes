@@ -1,3 +1,31 @@
+<h1>Your Profile</h1>
+
 <div>
-    <h1 class="font-bold text-4xl">Profile</h1>
+    <!-- Show Profile Picture if exists -->
+    <% if current_user.profile_picture.attached? %>
+    <img src="<%= url_for(current_user.profile_picture) %>" alt="Profile Picture" class="w-32 h-32 rounded-full">
+    <% else %>
+    <p>No profile picture uploaded</p>
+    <% end %>
+
+    <p><strong>First Name:</strong> <%= current_user.first_name %></p>
+    <p><strong>Last Name:</strong> <%= current_user.last_name %></p>
+    <p><strong>Email:</strong> <%= current_user.email %></p>
+    <p><strong>Phone Number:</strong> <%= current_user.phone_number %></p>
+    <p><strong>Location:</strong> <%= current_user.location %></p>
+
+    <!-- Display Sports Interests -->
+    <p><strong>Sports Interests:</strong></p>
+    <% if current_user.sports.any? %>
+    <ul>
+        <% current_user.sports.each do |sport| %>
+        <li><%= sport.name %></li>
+        <% end %>
+    </ul>
+    <% else %>
+    <p>No sports interests selected.</p>
+    <% end %>
+
+    <!-- Link to Edit Profile -->
+    <%= link_to "Edit Profile", edit_profile_path, class: "text-blue-500 hover:text-blue-700" %>
 </div>
