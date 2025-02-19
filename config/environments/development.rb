@@ -77,6 +77,9 @@ Rails.application.configure do
   if Rails.env.development?
     config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload
   end
+
+  config.active_storage.service = :local
+
   
 
 end
