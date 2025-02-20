@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  sport: one
+  duration_minutes: 1
+  played_on: 2025-02-20
+
+two:
+  user: two
+  sport: two
+  duration_minutes: 1
+  played_on: 2025-02-20
