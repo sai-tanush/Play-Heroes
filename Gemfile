@@ -20,6 +20,7 @@ gem "tailwindcss-ruby", "~> 4.0"
 gem "tailwindcss-rails", "~> 4.0"
 gem 'devise'
 gem 'rack-livereload'
+gem 'sqlite3'
 
 
 group :development, :test do
