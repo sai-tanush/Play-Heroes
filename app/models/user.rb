@@ -4,7 +4,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   # Associations
-  has_many :sports
+  has_and_belongs_to_many :sports
   has_one_attached :profile_picture
   has_many :posts, dependent: :destroy
+  has_many :post_likes, dependent: :destroy
 end

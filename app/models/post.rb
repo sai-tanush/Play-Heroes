@@ -1,4 +1,5 @@
 class Post < ApplicationRecord
+  has_many :post_likes, dependent: :destroy
   belongs_to :user
   validates :description, presence: true
   has_one_attached :media

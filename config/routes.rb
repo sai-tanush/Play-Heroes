@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     get "/profile/edit", to: "users#edit", as: "edit_profile"
     patch "/profile", to: "users#update", as: :update_profile
     resources :posts, only: [:index, :new, :create, :destroy]
+    post "/posts/:id/like", to: "posts#like", as: :like_post
   end
 
 end
