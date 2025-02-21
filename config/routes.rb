@@ -6,8 +6,12 @@ Rails.application.routes.draw do
 
   authenticate :user do
     get "/play", to: "pages#play"
-    get "/moments", to: "pages#moments"
+    get "/moments", to: "posts#index"
+    get "/track", to: "pages#track"
     get "/profile", to: "users#profile"
+    get "/profile/edit", to: "users#edit", as: "edit_profile"
+    patch "/profile", to: "users#update", as: :update_profile
+    resources :posts, only: [:index, :new, :create, :destroy]
   end
 
 end
