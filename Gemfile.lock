@@ -414,7 +414,6 @@ DEPENDENCIES
   solid_cache
   solid_queue
   sqlite3
-  sqlite3
   stimulus-rails
   tailwindcss-rails (~> 4.0)
   tailwindcss-ruby (~> 4.0)
