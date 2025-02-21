@@ -3,7 +3,7 @@ source "https://rubygems.org"
 
 gem "rails", "~> 8.0.1"
 gem "propshaft"
-gem "pg", "~> 1.1"
+gem "sqlite3"
 gem "puma", ">= 5.0"
 gem "importmap-rails"
 gem "turbo-rails"
@@ -34,5 +34,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-
-
