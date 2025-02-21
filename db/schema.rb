@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_21_031117) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_21_061701) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -74,13 +74,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_031117) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "user_sports", force: :cascade do |t|
+  create_table "sports_users", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "sports_id", null: false
+    t.integer "sport_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["sports_id"], name: "index_user_sports_on_sports_id"
-    t.index ["user_id"], name: "index_user_sports_on_user_id"
+    t.index ["sport_id"], name: "index_sports_users_on_sport_id"
+    t.index ["user_id"], name: "index_sports_users_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -108,6 +108,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_031117) do
   add_foreign_key "posts", "users"
   add_foreign_key "sport_sessions", "sports"
   add_foreign_key "sport_sessions", "users"
-  add_foreign_key "user_sports", "sports", column: "sports_id"
-  add_foreign_key "user_sports", "users"
+  add_foreign_key "sports_users", "sports"
+  add_foreign_key "sports_users", "users"
 end
