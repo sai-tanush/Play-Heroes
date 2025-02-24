@@ -1,20 +1,25 @@
 <div id="like_section_<%= post.id %>">
     <div class="flex items-start justify-start gap-2">
-        <div class="mt-4 flex flex-col justify-center items-center">
-            <%= button_to like_post_path(post), form: { data: { turbo: true, turbo_stream: true } }, class: "cursor-pointer #{ current_user.post_likes.find_by(post_id: post.id).present? ? 'text-rose-500' : 'text-gray-500 hover:text-gray-700 active:text-gray-800 ' }" do %>
+        <div class="mt-4 flex justify-center items-center">
+            <div>
+                <%= button_to like_post_path(post), form: { data: { turbo: true, turbo_stream: true } }, class: "cursor-pointer #{ current_user.post_likes.find_by(post_id: post.id).present? ? 'text-rose-500' : 'text-gray-500 hover:text-gray-700 active:text-gray-800 ' }" do %>
                 <%= icon "volleyball" %>
-            <% end %>
+                <% end %>
+            </div>
 
             <%# like count %>
-            <p class="text-gray-700">
+            <p class="-mt-4 flex justify-center items-center gap-x-4 text-gray-700">
+            <div>
                 <%= post.post_likes.count %>
+            </div>
+            <p> - Likes</p>
             </p>
         </div>
 
         <!-- View Post Button -->
         <div class="mt-4">
             <%= link_to "#", method: :post, class: "text-gray-500 hover:text-blue-500 active:text-blue-600" do %>
-                <%= icon "external-link" %>
+            <%= icon "external-link" %>
             <% end %>
         </div>
 
