@@ -11,7 +11,11 @@ Rails.application.routes.draw do
     get "/profile", to: "users#profile"
     get "/profile/edit", to: "users#edit", as: "edit_profile"
     patch "/profile", to: "users#update", as: :update_profile
-    resources :posts, only: [:index, :new, :create, :destroy]
+    
+    resources :posts, only: [:index, :new, :create, :destroy] do 
+      resources :comments, only: [:create, :destroy]
+    end
+    
     post "/posts/:id/like", to: "posts#like", as: :like_post
   end
 
