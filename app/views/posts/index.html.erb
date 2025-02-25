@@ -1,137 +1,218 @@
-<h1 class="text-3xl font-bold mb-6 text-gray-800">Moments</h1>
+<div class="relative h-screen w-screen flex justify-center items-center bg-cover bg-center bg-no-repeat z-10" style="background-image: url('<%= asset_url("LandingPage.png") %>');">
 
-<div class="flex gap-6 max-w-4xl mx-auto">
-    <!-- Left Sidebar (Add Post Button) -->
-    <div class="w-1/4">
-        <%= link_to "+ Add Post", new_post_path,
-      class: "block w-full text-center bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition" %>
-    </div>
+    <div class="absolute inset-0 bg-black opacity-30"></div>
 
-    <!-- Posts Section -->
-    <div class="w-3/4 space-y-6">
-        <% @posts.each do |post| %>
-        <div class="bg-white shadow-md rounded-lg p-6 border border-gray-200 relative">
-            <!-- User Info -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold">
-                        <%= post.user.first_name ? post.user.first_name[0].upcase : 'U' %>
+    <div class="relative z-10 w-full max-w-6xl mx-auto p-4">
+
+        <h1 class="text-3xl font-bold mb-6 text-gray-200 text-center">Moments</h1>
+
+        <div class="flex justify-center gap-6">
+
+            <div class="w-1/4">
+                <%= link_to "+ Add Post", new_post_path,
+  class: "block w-full text-center bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition" %>
+            </div>
+
+            <div class="w-3/4 max-h-screen overflow-y-auto space-y-6 scrollbar-hide">
+                <% @posts.each do |post| %>
+                <div class="bg-white shadow-md rounded-lg p-6 border border-gray-200 relative">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold">
+                                <%= post.user.first_name ? post.user.first_name[0].upcase : 'U' %>
+                            </div>
+                            <div>
+                                <p class="text-gray-900 font-semibold text-lg"><%= post.user.first_name %></p>
+                                <p class="text-gray-500 text-sm"><%= time_ago_in_words(post.created_at) %> ago</p>
+                            </div>
+                        </div>
+
+                        <% if post.user == current_user %>
+                        <%= link_to "Delete", post_path(post), data: {turbo_method: :delete, turbo_confirm: 'Are you sure?'},
+      class: "bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600" %>
+                        <% end %>
                     </div>
-                    <div>
-                        <p class="text-gray-900 font-semibold text-lg"><%= post.user.first_name %></p>
-                        <p class="text-gray-500 text-sm"><%= time_ago_in_words(post.created_at) %> ago</p>
-                    </div>
-                </div>
 
-                <!-- Delete Button -->
-                <% if post.user == current_user %>
-                <%= link_to "Delete", post_path(post), data: {turbo_method: :delete, turbo_confirm: 'Are you sure?'},
-                    class: "bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600" %>
-                <% end %>
-            </div>
+                    <p class="text-gray-800 my-4"><%= post.description %></p>
 
-            <!-- Post Content -->
-            <p class="text-gray-800 my-4"><%= post.description %></p>
+                    <% if post.media.attached? %>
+                    <div class="mt-4 relative">
+                        <div class="carousel-container relative w-full overflow-hidden rounded-lg border">
+                            <div class="carousel-items flex transition-transform duration-300 ease-in-out" id="carousel-<%= post.id %>">
+                                <% post.media.each_with_index do |media, index| %>
+                                <div class="carousel-item w-full flex-shrink-0">
+                                    <% if media.content_type.start_with?('image') %>
+                                    <%= image_tag media, class: "w-full h-auto max-h-96 object-contain mx-auto" %>
+                                    <% elsif media.content_type.start_with?('video') %>
+                                    <video controls class="w-full h-auto max-h-96 mx-auto">
+                                        <source src="<%= url_for(media) %>" type="<%= media.content_type %>">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <% end %>
+                                </div>
+                                <% end %>
+                            </div>
 
-            <!-- Media Display -->
-            <% if post.media.attached? %>
-            <div class="mt-4">
-                <% if post.media.content_type.start_with?('image') %>
-                <%= image_tag post.media, class: "w-full h-auto rounded-lg border" %>
-                <% elsif post.media.content_type.start_with?('video') %>
-                <video controls class="w-full rounded-lg border">
-                    <source src="<%= url_for(post.media) %>" type="<%= post.media.content_type %>">
-                    Your browser does not support the video tag.
-                </video>
-                <% end %>
-            </div>
-            <% end %>
+                            <% if post.media.count > 1 %>
+                            <!-- Left Arrow -->
+                            <button onclick="moveCarousel('<%= post.id %>', 'prev')" class="carousel-control left absolute top-1/2 left-2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-2 shadow-md hover:bg-opacity-90 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
 
-            <!-- Like Button -->
-            <div class="flex justify-around items-center gap-x-8">
-                <%= render partial: 'like_section', locals: { post: post, user: current_user } %>
+                            <!-- Right Arrow -->
+                            <button onclick="moveCarousel('<%= post.id %>', 'next')" class="carousel-control right absolute top-1/2 right-2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-2 shadow-md hover:bg-opacity-90 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
 
-                <!-- Comment Icon & Toggle -->
-                <button onclick="toggleComments('<%= post.id %>')" class="mt-5 flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition cursor-pointer">
-                    <%= image_tag 'comment-icon.png', alt: "Comment", class: "w-5 h-5" %>
-                    <span><%= pluralize(post.comments.count, "comment") %></span>
-                </button>
-            </div>
-
-            <!-- Comment Section -->
-            <div class="mt-4 pt-4">
-                <!-- Main Comment Form (Always Visible) -->
-                <div class="mt-4 hidden" id="main-comment-form-<%= post.id %>">
-                    <%= form_with model: [post, Comment.new], remote: true, class: "space-y-2", id: "main-comment-form-#{post.id}" do |f| %>
-                    <div class="flex">
-                        <%= f.text_area :body, placeholder: "Write a comment...", class: "w-full border rounded p-2" %>
-                        <%= f.submit "Post", class: "ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" %>
+                            <!-- Indicators -->
+                            <div class="carousel-indicators absolute bottom-2 left-0 right-0 flex justify-center space-x-2">
+                                <% post.media.each_with_index do |_, index| %>
+                                <div class="w-2 h-2 rounded-full bg-gray-300 carousel-indicator-<%= post.id %>-<%= index %> <%= index == 0 ? 'bg-blue-500' : '' %>"></div>
+                                <% end %>
+                            </div>
+                            <% end %>
+                        </div>
                     </div>
                     <% end %>
-                </div>
 
-                <!-- Display Comments -->
-                <div id="comments-<%= post.id %>" class="mt-4 space-y-2">
-                    <% post.comments.where(parent_id: nil).each do |comment| %>
-                    <div class="flex items-start space-x-2">
-                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600">
-                            <%= comment.user.first_name ? comment.user.first_name[0].upcase : 'U' %>
+                    <div class="flex justify-around items-center gap-x-8">
+                        <%= render partial: 'like_section', locals: { post: post, user: current_user } %>
+
+                        <button onclick="toggleComments('<%= post.id %>')" class="mt-5 flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition cursor-pointer">
+                            <%= image_tag 'comment-icon.png', alt: "Comment", class: "w-5 h-5" %>
+                            <span><%= pluralize(post.comments.count, "comment") %></span>
+                        </button>
+                    </div>
+
+                    <div class="mt-4 pt-4">
+                        <!-- Comment form is hidden by default -->
+                        <div class="mt-4 hidden" id="main-comment-form-<%= post.id %>">
+                            <%= form_with model: [post, Comment.new], remote: true, class: "space-y-2", id: "main-comment-form-#{post.id}" do |f| %>
+                            <div class="flex">
+                                <%= f.text_area :body, placeholder: "Write a comment...", class: "w-full border rounded p-2" %>
+                                <%= f.submit "Post", class: "ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" %>
+                            </div>
+                            <% end %>
                         </div>
-                        <div class="flex flex-col bg-gray-100 p-2 rounded-md w-full">
-                            <div class="flex justify-between items-center">
-                                <p class="text-gray-800"><strong><%= comment.user.first_name %></strong>: <%= comment.body %></p>
-                                <p class="text-gray-500 text-xs"><%= time_ago_in_words(comment.created_at) %> ago</p>
 
-                                <% if comment.user == current_user %>
-                                <%= link_to "Delete", post_comment_path(post, comment),
-                                    data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
-                                    class: "text-red-500 text-xs hover:underline cursor-pointer" %>
-                                <% end %>
-
-                                <button onclick="showReplyForm('<%= post.id %>', '<%= comment.id %>')" class="text-blue-500 text-xs hover:underline cursor-pointer">Reply</button>
-                            </div>
-
-                            <!-- Reply Form -->
-                            <div id="reply-form-<%= comment.id %>" class="hidden mt-2">
-                                <%= form_with model: [post, Comment.new], remote: true, class: "space-y-2" do |f| %>
-                                <div class="flex">
-                                    <%= f.hidden_field :parent_id, value: comment.id %>
-                                    <%= f.text_area :body, placeholder: "Write a reply...", class: "w-full border rounded p-2" %>
-                                    <%= f.submit "Post", class: "ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" %>
-                                </div>
-                                <% end %>
-                            </div>
-
-                            <!-- Replies -->
-                            <% comment.replies.each do |reply| %>
-                            <div class="ml-8 mt-2 flex items-start space-x-2">
+                        <!-- Comment section is hidden by default -->
+                        <div id="comments-<%= post.id %>" class="mt-4 space-y-2 hidden">
+                            <% post.comments.where(parent_id: nil).each do |comment| %>
+                            <div class="flex items-start space-x-2">
                                 <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600">
-                                    <%= reply.user.first_name ? reply.user.first_name[0].upcase : 'U' %>
+                                    <%= comment.user.first_name ? comment.user.first_name[0].upcase : 'U' %>
                                 </div>
-                                <div class="bg-gray-200 p-2 rounded-md w-full">
-                                    <p class="text-gray-800"><strong><%= reply.user.first_name %></strong>: <%= reply.body %></p>
-                                    <p class="text-gray-500 text-xs"><%= time_ago_in_words(reply.created_at) %> ago</p>
+                                <div class="flex flex-col bg-gray-100 p-2 rounded-md w-full">
+                                    <div class="flex justify-between items-center">
+                                        <p class="text-gray-800"><strong><%= comment.user.first_name %></strong>: <%= comment.body %></p>
+                                        <p class="text-gray-500 text-xs"><%= time_ago_in_words(comment.created_at) %> ago</p>
 
-                                    <% if reply.user == current_user %>
-                                    <%= link_to "Delete", post_comment_path(post, reply),
-                            data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
-                            class: "text-red-500 text-xs hover:underline cursor-pointer" %>
+                                        <% if comment.user == current_user %>
+                                        <%= link_to "Delete", post_comment_path(post, comment),
+              data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
+              class: "text-red-500 text-xs hover:underline cursor-pointer" %>
+                                        <% end %>
+
+                                        <button onclick="showReplyForm('<%= post.id %>', '<%= comment.id %>')" class="text-blue-500 text-xs hover:underline cursor-pointer">Reply</button>
+                                    </div>
+
+                                    <div id="reply-form-<%= comment.id %>" class="hidden mt-2">
+                                        <%= form_with model: [post, Comment.new], remote: true, class: "space-y-2" do |f| %>
+                                        <div class="flex">
+                                            <%= f.hidden_field :parent_id, value: comment.id %>
+                                            <%= f.text_area :body, placeholder: "Write a reply...", class: "w-full border rounded p-2" %>
+                                            <%= f.submit "Post", class: "ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" %>
+                                        </div>
+                                        <% end %>
+                                    </div>
+
+                                    <% comment.replies.each do |reply| %>
+                                    <div class="ml-8 mt-2 flex items-start space-x-2">
+                                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600">
+                                            <%= reply.user.first_name ? reply.user.first_name[0].upcase : 'U' %>
+                                        </div>
+                                        <div class="bg-gray-200 p-2 rounded-md w-full">
+                                            <p class="text-gray-800"><strong><%= reply.user.first_name %></strong>: <%= reply.body %></p>
+                                            <p class="text-gray-500 text-xs"><%= time_ago_in_words(reply.created_at) %> ago</p>
+
+                                            <% if reply.user == current_user %>
+                                            <%= link_to "Delete", post_comment_path(post, reply),
+                data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
+                class: "text-red-500 text-xs hover:underline cursor-pointer" %>
+                                            <% end %>
+                                        </div>
+                                    </div>
                                     <% end %>
                                 </div>
                             </div>
                             <% end %>
                         </div>
                     </div>
-                    <% end %>
                 </div>
-
+                <% end %>
             </div>
+
         </div>
-        <% end %>
     </div>
 </div>
 
 <script>
+    // Function to handle carousel navigation
+    function moveCarousel(postId, direction) {
+        const container = document.getElementById(`carousel-${postId}`);
+        const items = container.querySelectorAll('.carousel-item');
+        const itemWidth = container.offsetWidth;
+
+        // Get current position from transform style or default to 0
+        let currentPosition = 0;
+        const transformValue = container.style.transform;
+        if (transformValue) {
+            const match = transformValue.match(/translateX\((-?\d+)px\)/);
+            if (match) {
+                currentPosition = parseInt(match[1], 10);
+            }
+        }
+
+        // Calculate the index based on current position
+        let currentIndex = Math.abs(currentPosition / itemWidth);
+
+        // Update index based on direction
+        if (direction === 'next') {
+            currentIndex = (currentIndex + 1) % items.length;
+        } else {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+        }
+
+        // Calculate new position
+        const newPosition = -currentIndex * itemWidth;
+
+        // Apply transform
+        container.style.transform = `translateX(${newPosition}px)`;
+
+        // Update indicators
+        updateCarouselIndicators(postId, currentIndex, items.length);
+    }
+
+    // Function to update carousel indicators
+    function updateCarouselIndicators(postId, activeIndex, totalItems) {
+        for (let i = 0; i < totalItems; i++) {
+            const indicator = document.querySelector(`.carousel-indicator-${postId}-${i}`);
+            if (indicator) {
+                if (i === activeIndex) {
+                    indicator.classList.add('bg-blue-500');
+                    indicator.classList.remove('bg-gray-300');
+                } else {
+                    indicator.classList.add('bg-gray-300');
+                    indicator.classList.remove('bg-blue-500');
+                }
+            }
+        }
+    }
+
     function showReplyForm(postId, commentId) {
         let form = document.getElementById(`reply-form-${commentId}`);
         form.classList.toggle('hidden');
@@ -152,4 +233,53 @@
             }
         }
     }
+
+    // Initialize all carousels when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousels = document.querySelectorAll('.carousel-container');
+        carousels.forEach(carousel => {
+            const postId = carousel.querySelector('.carousel-items').id.replace('carousel-', '');
+            updateCarouselIndicators(postId, 0, carousel.querySelectorAll('.carousel-item').length);
+        });
+    });
 </script>
+
+<style>
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .carousel-container {
+        position: relative;
+    }
+
+    .carousel-items {
+        display: flex;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .carousel-item {
+        width: 100%;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f8f8;
+        min-height: 200px;
+    }
+
+    .carousel-control {
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .carousel-container:hover .carousel-control {
+        opacity: 1;
+    }
+</style>
