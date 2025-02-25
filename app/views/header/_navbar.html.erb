@@ -26,7 +26,7 @@
                                 <img class="h-10 w-10 rounded-full border border-gray-300" src="<%= image_path('default_profile_pic.jpg') %>" alt="User Profile">
                             </button>
                             <!-- Dropdown Menu -->
-                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black/5 opacity-0 group-hover:opacity-100 group-hover:block transition-all duration-300">
+                            <div class="absolute z-50 right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black/5 opacity-0 group-hover:opacity-100 group-hover:block transition-all duration-300">
                                 <%= link_to "Profile", profile_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
                                 <%= link_to "Logout", destroy_user_session_path, data: { "turbo-method": :delete }, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
                             </div>
