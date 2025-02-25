@@ -73,7 +73,7 @@ class PostsController < ApplicationController
     end
 
     def post_params
-      params.require(:post).permit(:description, :media)
+      params.require(:post).permit(:description, media: [])
     end
 
     def authorize_user
