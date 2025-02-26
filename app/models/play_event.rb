@@ -25,4 +25,12 @@ class PlayEvent < ApplicationRecord
       errors.add(:event_date, "must be a future date")
     end
   end
+
+  def event_timeline
+    if event_date && event_start_time
+      event_date.to_datetime.change(hour: event_start_time.hour, min: event_start_time.min, sec: event_start_time.sec)
+    else
+      nil
+    end
+  end
 end
