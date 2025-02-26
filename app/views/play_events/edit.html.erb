@@ -1,0 +1,30 @@
+<%= form_with(model: @play_event, local: true) do |form| %>
+<%= form.label :sport_id %>
+<%= form.collection_select :sport_id, Sport.all, :id, :name %>
+
+<%= form.label :sport_type %>
+<%= form.select :sport_type, ['Regular', 'Tournament'] %>
+
+<%= form.label :event_location %>
+<%= form.text_field :event_location %>
+
+<%= form.label :event_category %>
+<%= form.select :event_category, ['Beginner', 'Intermediate', 'Professional'] %>
+
+<%= form.label :event_instructions %>
+<%= form.text_area :event_instructions %>
+
+<%= form.label :event_date %>
+<%= form.date_field :event_date %>
+
+<%= form.label :event_start_time %>
+<%= form.time_field :event_start_time %>
+
+<%= form.label :event_end_time %>
+<%= form.time_field :event_end_time %>
+
+<%= form.label :event_capacity %>
+<%= form.number_field :event_capacity %>
+
+<%= form.submit %>
+<% end %>
