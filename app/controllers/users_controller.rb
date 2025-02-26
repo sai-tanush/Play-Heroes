@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    # @user is already set from the before_action
+    # user already set before action
   end
 
   def update
@@ -20,7 +20,7 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = current_user
+    @user = User.find_by(id: params[:id]) || current_user
   end
 
   def user_params
