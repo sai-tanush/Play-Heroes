@@ -21,6 +21,7 @@ gem "tailwindcss-rails", "~> 4.0"
 gem 'devise'
 gem 'rack-livereload'
 gem 'sqlite3'
+gem 'font-awesome-rails'
 
 
 group :development, :test do
