@@ -72,4 +72,14 @@ Rails.application.configure do
 
   #Devise setup
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+  #Rails Live Reload
+  if Rails.env.development?
+    config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload
+  end
+
+  config.active_storage.service = :local
+
+  
+
 end

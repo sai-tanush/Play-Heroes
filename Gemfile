@@ -3,7 +3,7 @@ source "https://rubygems.org"
 
 gem "rails", "~> 8.0.1"
 gem "propshaft"
-gem "pg", "~> 1.1"
+gem "sqlite3"
 gem "puma", ">= 5.0"
 gem "importmap-rails"
 gem "turbo-rails"
@@ -19,6 +19,9 @@ gem "thruster", require: false
 gem "tailwindcss-ruby", "~> 4.0"
 gem "tailwindcss-rails", "~> 4.0"
 gem 'devise'
+gem 'rack-livereload'
+gem 'sqlite3'
+
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -28,6 +31,7 @@ end
 
 group :development do
   gem "web-console"
+  gem "rails_live_reload"
 end
 
 group :test do
@@ -35,4 +39,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-
+gem "rails_icons", "~> 1.1"

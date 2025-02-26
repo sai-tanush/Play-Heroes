@@ -1,0 +1,40 @@
+<%= form_for @user, url: update_profile_path, method: :patch, html: { multipart: true } do |f| %>
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-center mb-8">Edit Profile</h2>
+
+    <div class="mb-4">
+        <%= f.label :first_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :first_name, class: "mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+    </div>
+
+    <div class="mb-4">
+        <%= f.label :last_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :last_name, class: "mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+    </div>
+
+    <div class="mb-4">
+        <%= f.label :phone_number, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :phone_number, class: "mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+    </div>
+
+    <div class="mb-4">
+        <%= f.label :location, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :location, class: "mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+    </div>
+
+    <div class="mb-4">
+        <%= f.label :profile_picture, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.file_field :profile_picture, class: "mt-1 block w-full text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    </div>
+
+    <!-- Sports Interests Section -->
+    <div class="mb-4">
+        <%= f.label :sports, "Sports Interests", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.collection_check_boxes :sport_ids, @sports, :id, :name, { class: "mt-1" } %>
+    </div>
+
+    <div class="mt-6 text-center">
+        <%= f.submit "Save Changes", class: "px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+    </div>
+</div>
+<% end %>

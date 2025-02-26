@@ -1,0 +1,6 @@
+<%= form_with model: [post, comment], id: "comment-form-#{post.id}", data: { turbo: true } do |f| %>
+<div class="flex">
+    <%= f.text_area :body, placeholder: "Write a comment...", class: "w-full border rounded p-2" %>
+    <%= f.submit "Post", class: "ml-2 bg-blue-500 text-white h-10 px-3 py-1 rounded hover:bg-blue-600" %>
+</div>
+<% end %>
