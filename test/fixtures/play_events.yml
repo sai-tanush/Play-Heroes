@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sport_id: one
+  host_id: one
+  sport_type: MyString
+  event_location: MyString
+  event_category: MyString
+  event_instructions: MyText
+  event_start_time: 2025-02-26 19:50:20
+  event_end_time: 2025-02-26 19:50:20
+  event_capacity: 1
+
+two:
+  sport_id: two
+  host_id: two
+  sport_type: MyString
+  event_location: MyString
+  event_category: MyString
+  event_instructions: MyText
+  event_start_time: 2025-02-26 19:50:20
+  event_end_time: 2025-02-26 19:50:20
+  event_capacity: 1
