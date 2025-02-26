@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_26_142132) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_26_154448) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -60,8 +60,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_142132) do
   end
 
   create_table "play_events", force: :cascade do |t|
-    t.integer "sport_id_id", null: false
-    t.integer "host_id_id", null: false
+    t.bigint "sport_id"
+    t.bigint "host_id"
     t.string "sport_type"
     t.string "event_location"
     t.string "event_category"
@@ -71,8 +71,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_142132) do
     t.integer "event_capacity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["host_id_id"], name: "index_play_events_on_host_id_id"
-    t.index ["sport_id_id"], name: "index_play_events_on_sport_id_id"
+    t.index ["host_id"], name: "index_play_events_on_host_id"
+    t.index ["sport_id"], name: "index_play_events_on_sport_id"
   end
 
   create_table "post_likes", force: :cascade do |t|
@@ -143,8 +143,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_142132) do
   add_foreign_key "comments", "users"
   add_foreign_key "event_participants", "play_events"
   add_foreign_key "event_participants", "users"
-  add_foreign_key "play_events", "host_ids"
-  add_foreign_key "play_events", "sport_ids"
+  add_foreign_key "play_events", "sports"
+  add_foreign_key "play_events", "users", column: "host_id"
   add_foreign_key "post_likes", "posts"
   add_foreign_key "post_likes", "users"
   add_foreign_key "posts", "users"
