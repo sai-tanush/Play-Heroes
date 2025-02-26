@@ -1,0 +1,7 @@
+<%= form_with model: [post, Comment.new], data: { turbo: true } do |f| %>
+<div class="flex">
+    <%= f.hidden_field :parent_id, value: parent_id %>
+    <%= f.text_area :body, placeholder: "Write a reply...", class: "w-full border rounded p-2" %>
+    <%= f.submit "Post", class: "ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" %>
+</div>
+<% end %>
