@@ -1,11 +1,19 @@
 Rails.application.routes.draw do
+  get "play_events/index"
+  get "play_events/show"
+  get "play_events/new"
+  get "play_events/create"
+  get "play_events/edit"
+  get "play_events/update"
+  get "play_events/destroy"
+  get "play_events/join"
   resources :sports
   devise_for :users
   get "home/index"
   root "home#index"
 
   authenticate :user do
-    get "/play", to: "pages#play"
+    get "/play", to: "play_events#index"
     get "/moments", to: "posts#index"
     get "/track", to: "pages#track"
     get "/profile", to: "users#profile"
@@ -14,6 +22,12 @@ Rails.application.routes.draw do
     
     resources :posts, only: [:index, :new, :create, :destroy] do 
       resources :comments, only: [:create, :destroy]
+    end
+
+    resources :play_events do
+      member do
+        post 'join'
+      end
     end
     
     post "/posts/:id/like", to: "posts#like", as: :like_post
