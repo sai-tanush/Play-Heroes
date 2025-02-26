@@ -9,16 +9,22 @@ class CommentsController < ApplicationController
       @comment.user = current_user
       @comment.parent_id = params[:comment][:parent_id] if params[:comment][:parent_id].present?
   
-      if @comment.save
-        redirect_to moments_path, notice: "Comment added!"
-      else
-        redirect_to moments_path, alert: "Failed to add comment."
+      respond_to do |format|
+        if @comment.save
+          format.turbo_stream
+          format.html { redirect_to root_path }
+        else
+          format.html { redirect_to root_path, alert: 'Error posting comment.' }
+        end
       end
     end
   
     def destroy
       @comment.destroy
-      redirect_to moments_path, notice: "Comment deleted."
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to root_path }
+      end
     end
   
     private
