@@ -2,34 +2,105 @@
 
     <div class="absolute inset-0 bg-black opacity-30"></div>
 
-    <div class="relative z-10 w-full max-w-6xl mx-auto p-4">
-
-        <h1 class="text-3xl font-bold mb-6 text-gray-200 text-center">Moments</h1>
+    <div class="relative mt-10 z-10 w-full max-w-6xl mx-auto p-4">
 
         <div class="flex justify-center gap-6">
 
-            <div class="w-1/4">
-                <%= link_to "+ Add Post", new_post_path,
-  class: "block w-full text-center bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition" %>
+            <div class="lg:-ml-[30%]">
+                <div class="flex flex-col text-center">
+                    <h1 class="text-5xl font-bold text-gray-200 ">Moments</h1>
+                    <p class="text-xl font-bold text-gray-200">Post the best moments of the game!</p>
+                </div>
+
+
+                <div class="flex flex-col my-10">
+                    <div class="text-xl font-semibold bg-white shadow-md rounded-lg px-6 py-6 border border-gray-200 flex flex-col gap-y-4">
+                        <div>
+                            <% if current_user.present? %>
+                            <div class="flex items-center space-x-2">
+                                <% if current_user.profile_picture.present? %>
+                                <div class="w-12 h-12 bg-gray-300 border-3 border-blue-500 rounded-full overflow-hidden">
+                                    <%= image_tag current_user.profile_picture, class: "w-full h-full object-cover" %>
+                                </div>
+                                <% else %>
+                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold">
+                                    <%= current_user.first_name ? current_user.first_name[0].upcase : 'U' %>
+                                    <%= current_user.last_name ? current_user.last_name[0].upcase : '' %>
+                                </div>
+                                <% end %>
+                                <div>
+                                    <div class="flex gap-x-1">
+                                        <p class="text-gray-900 font-semibold text-lg"><%= current_user.first_name %></p>
+                                        <p class="text-gray-900 font-semibold text-lg"><%= current_user.last_name %></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <% else %>
+                            <p class="text-red-500">User not found</p>
+                            <% end %>
+
+                            <p class="text-gray-500 text-md mt-4">Share about your today's game</p>
+
+                        </div>
+
+                        <div>
+                            <%= link_to "+ Add Post", new_post_path,
+                            class: "block w-full text-center bg-green-500 text-white py-2 px-4 rounded-md shadow hover:bg-green-600 transition" %>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-10 text-center -ml-2 bg-white shadow-md rounded-lg px-6 py-6 border border-gray-200">
+                        <p class="text-3xl font-semibold text-gray-600 ">Your Total Kicks</p>
+                        <p class="text-8xl font-bold bg-gradient-to-t from-orange-500 via-red-500 to-yellow-400 bg-clip-text text-transparent ">1.2K</p>
+                    </div>
+
+                </div>
+
             </div>
+
+
 
             <div class="w-3/4 max-h-screen overflow-y-auto space-y-6 scrollbar-hide">
                 <% @posts.each do |post| %>
-                <div class="bg-white shadow-md rounded-lg p-6 border border-gray-200 relative">
+                <div class="bg-white shadow-md rounded-lg px-6 pt-6 border border-gray-200 relative">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <% if post.user.profile_picture.present? %>
+                            <div class="w-12 h-12 bg-gray-300 border-3 border-blue-500 rounded-full overflow-hidden">
+                                <%= image_tag post.user.profile_picture, class: "w-full h-full object-cover" %>
+                            </div>
+                            <% else %>
                             <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold">
                                 <%= post.user.first_name ? post.user.first_name[0].upcase : 'U' %>
+                                <%= post.user.last_name ? post.user.last_name[0].upcase : '' %>
                             </div>
+                            <% end %>
                             <div>
-                                <p class="text-gray-900 font-semibold text-lg"><%= post.user.first_name %></p>
-                                <p class="text-gray-500 text-sm"><%= time_ago_in_words(post.created_at) %> ago</p>
+                                <div class="flex gap-x-2">
+                                    <p class="text-gray-900 font-semibold text-lg"><%= post.user.first_name %></p>
+                                    <p class="text-gray-900 font-semibold text-lg"><%= post.user.last_name %></p>
+                                </div>
+
+                                <p class="text-gray-500 text-xs"><%= time_ago_in_words(post.created_at) %> ago</p>
                             </div>
                         </div>
 
                         <% if post.user == current_user %>
-                        <%= link_to "Delete", post_path(post), data: {turbo_method: :delete, turbo_confirm: 'Are you sure?'},
-      class: "bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600" %>
+                        <div class="relative group">
+                            <button class="p-1 rounded-full hover:bg-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                            </button>
+                            <div class="absolute right-0 mt-1 w-48 bg-gray-100 rounded-md hidden group-hover:block z-10">
+                                <div class="py-1">
+                                    <%= link_to "Delete", post_path(post), 
+                                            data: {turbo_method: :delete, turbo_confirm: 'Are you sure?'},
+                                            class: "block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" %>
+                                </div>
+                            </div>
+                        </div>
                         <% end %>
                     </div>
 
@@ -79,7 +150,7 @@
                     </div>
                     <% end %>
 
-                    <div class="flex justify-around items-center gap-x-8">
+                    <div class="flex items-center gap-x-4">
                         <%= render partial: 'like_section', locals: { post: post, user: current_user } %>
 
                         <button onclick="toggleComments('<%= post.id %>')" class="mt-5 flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition cursor-pointer">
@@ -88,76 +159,28 @@
                         </button>
                     </div>
 
-                    <div class="mt-4 pt-4">
-                        <!-- Comment form is hidden by default -->
-                        <div class="mt-4 hidden" id="main-comment-form-<%= post.id %>">
-                            <%= form_with model: [post, Comment.new], remote: true, class: "space-y-2", id: "main-comment-form-#{post.id}" do |f| %>
-                            <div class="flex">
-                                <%= f.text_area :body, placeholder: "Write a comment...", class: "w-full border rounded p-2" %>
-                                <%= f.submit "Post", class: "ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" %>
-                            </div>
-                            <% end %>
+                    <div class="mt-2 py-4">
+                        <div id="main-comment-form-<%= post.id %>" class="hidden">
+                            <%= render partial: 'comment_form', locals: { post: post, comment: Comment.new } %>
                         </div>
 
-                        <!-- Comment section is hidden by default -->
                         <div id="comments-<%= post.id %>" class="mt-4 space-y-2 hidden">
-                            <% post.comments.where(parent_id: nil).each do |comment| %>
-                            <div class="flex items-start space-x-2">
-                                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600">
-                                    <%= comment.user.first_name ? comment.user.first_name[0].upcase : 'U' %>
-                                </div>
-                                <div class="flex flex-col bg-gray-100 p-2 rounded-md w-full">
-                                    <div class="flex justify-between items-center">
-                                        <p class="text-gray-800"><strong><%= comment.user.first_name %></strong>: <%= comment.body %></p>
-                                        <p class="text-gray-500 text-xs"><%= time_ago_in_words(comment.created_at) %> ago</p>
-
-                                        <% if comment.user == current_user %>
-                                        <%= link_to "Delete", post_comment_path(post, comment),
-              data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
-              class: "text-red-500 text-xs hover:underline cursor-pointer" %>
-                                        <% end %>
-
-                                        <button onclick="showReplyForm('<%= post.id %>', '<%= comment.id %>')" class="text-blue-500 text-xs hover:underline cursor-pointer">Reply</button>
-                                    </div>
-
-                                    <div id="reply-form-<%= comment.id %>" class="hidden mt-2">
-                                        <%= form_with model: [post, Comment.new], remote: true, class: "space-y-2" do |f| %>
-                                        <div class="flex">
-                                            <%= f.hidden_field :parent_id, value: comment.id %>
-                                            <%= f.text_area :body, placeholder: "Write a reply...", class: "w-full border rounded p-2" %>
-                                            <%= f.submit "Post", class: "ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" %>
-                                        </div>
-                                        <% end %>
-                                    </div>
-
-                                    <% comment.replies.each do |reply| %>
-                                    <div class="ml-8 mt-2 flex items-start space-x-2">
-                                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600">
-                                            <%= reply.user.first_name ? reply.user.first_name[0].upcase : 'U' %>
-                                        </div>
-                                        <div class="bg-gray-200 p-2 rounded-md w-full">
-                                            <p class="text-gray-800"><strong><%= reply.user.first_name %></strong>: <%= reply.body %></p>
-                                            <p class="text-gray-500 text-xs"><%= time_ago_in_words(reply.created_at) %> ago</p>
-
-                                            <% if reply.user == current_user %>
-                                            <%= link_to "Delete", post_comment_path(post, reply),
-                data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
-                class: "text-red-500 text-xs hover:underline cursor-pointer" %>
-                                            <% end %>
-                                        </div>
-                                    </div>
-                                    <% end %>
-                                </div>
+                            <div id="comments-list-<%= post.id %>">
+                                <% post.comments.where(parent_id: nil).order(created_at: :desc).each do |comment| %>
+                                <%= render partial: 'comment', locals: { post: post, comment: comment } %>
+                                <% end %>
                             </div>
-                            <% end %>
                         </div>
                     </div>
+
+
                 </div>
                 <% end %>
             </div>
 
         </div>
     </div>
+</div>
 </div>
 
 <script>
@@ -282,4 +305,5 @@
     .carousel-container:hover .carousel-control {
         opacity: 1;
     }
+</style>
 </style>
