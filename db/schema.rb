@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_26_154448) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_28_071603) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -57,6 +57,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_154448) do
     t.datetime "updated_at", null: false
     t.index ["play_event_id"], name: "index_event_participants_on_play_event_id"
     t.index ["user_id"], name: "index_event_participants_on_user_id"
+  end
+
+  create_table "join_requests", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "play_event_id", null: false
+    t.string "status", default: "pending"
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["play_event_id"], name: "index_join_requests_on_play_event_id"
+    t.index ["user_id", "play_event_id"], name: "index_join_requests_on_user_id_and_play_event_id", unique: true
+    t.index ["user_id"], name: "index_join_requests_on_user_id"
   end
 
   create_table "play_events", force: :cascade do |t|
@@ -143,6 +155,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_154448) do
   add_foreign_key "comments", "users"
   add_foreign_key "event_participants", "play_events"
   add_foreign_key "event_participants", "users"
+  add_foreign_key "join_requests", "play_events"
+  add_foreign_key "join_requests", "users"
   add_foreign_key "play_events", "sports"
   add_foreign_key "play_events", "users", column: "host_id"
   add_foreign_key "post_likes", "posts"
