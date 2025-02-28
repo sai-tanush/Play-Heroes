@@ -8,11 +8,18 @@ class PlayEventsController < ApplicationController
                            
     if user_signed_in?
       @joined_events = current_user.joined_events.order(event_start_time: :asc)
+      @user_pending_requests = current_user.join_requests.where(status: 'pending')
+      @pending_host_requests = JoinRequest.joins(:play_event)
+                                        .where(status: 'pending')
+                                        .where(play_events: { host_id: current_user.id })
     end
   end
   
   def show
     @participants = @play_event.participants
+    @is_host = user_signed_in? && current_user == @play_event.host
+    @is_participant = user_signed_in? && @play_event.participants.include?(current_user)
+    @has_pending_request = user_signed_in? && JoinRequest.exists?(user: current_user, play_event: @play_event, status: 'pending')
   end
   
   def new
@@ -55,6 +62,8 @@ class PlayEventsController < ApplicationController
     end
   end
   
+  # The join method will now be used only by hosts to manually add participants
+  # or for direct joining if you decide to keep that functionality for some events
   def join
     # Check if user is already a participant
     if @play_event.participants.include?(current_user)
@@ -87,8 +96,8 @@ class PlayEventsController < ApplicationController
   end
   
   def play_event_params
-    params.require(:play_event).permit(:sport_id, :sport_type, :event_location, :event_category, 
-                                      :event_instructions, :event_start_time, :event_end_time, 
-                                      :event_capacity)
+    params.require(:play_event).permit(:sport_id, :sport_type, :event_location, :event_category,
+                                     :event_instructions, :event_start_time, :event_end_time,
+                                     :event_capacity)
   end
 end
