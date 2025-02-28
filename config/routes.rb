@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     get "/profile/edit", to: "users#edit", as: "edit_profile"
     patch "/profile", to: "users#update", as: :update_profile
     
-    resources :posts, only: [:index, :new, :create, :destroy] do 
+    resources :posts, only: [:index, :new, :create, :destroy] do
       resources :comments, only: [:create, :destroy]
     end
 
@@ -29,9 +29,22 @@ Rails.application.routes.draw do
         post 'join'
         delete 'leave'
       end
+      
+      # Nested join_requests routes
+      resources :join_requests, only: [:create] do
+        collection do
+          delete :cancel, as: :cancel # This adds the cancel_join_request_path
+        end
+      end
     end
-    
+
+    resources :join_requests, only: [] do
+      member do
+        patch :accept
+        patch :reject
+      end
+    end
+
     post "/posts/:id/like", to: "posts#like", as: :like_post
   end
-
 end
