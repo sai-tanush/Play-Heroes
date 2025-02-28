@@ -5,6 +5,34 @@
         <%= link_to 'Create New Event', new_play_event_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 transform hover:-translate-y-1" %>
     </div>
 
+    <!-- Join Request Notifications for hosts -->
+    <% if user_signed_in? && @pending_host_requests.present? %>
+    <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Pending Join Requests</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <% @pending_host_requests.each do |request| %>
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg shadow-md p-4">
+                <div class="flex justify-between">
+                    <div>
+                        <h3 class="font-medium text-gray-800"><%= request.user.email %> wants to join:</h3>
+                        <p class="text-sm text-gray-700"><strong><%= request.play_event.sport.name %></strong> on <%= request.play_event.event_start_time.strftime("%b %d, %I:%M %p") %></p>
+
+                        <% if request.message.present? %>
+                        <p class="text-sm italic mt-2 text-gray-600">"<%= request.message %>"</p>
+                        <% end %>
+                    </div>
+                </div>
+
+                <div class="mt-3 flex space-x-2">
+                    <%= button_to 'Accept', accept_join_request_path(request), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm" %>
+                    <%= button_to 'Reject', reject_join_request_path(request), method: :patch, class: "bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm" %>
+                </div>
+            </div>
+            <% end %>
+        </div>
+    </div>
+    <% end %>
+
     <div class="flex flex-col md:flex-row">
         <!-- Main content - Upcoming Events (75% width) -->
         <div class="w-full md:w-3/4 md:pr-6">
@@ -14,20 +42,24 @@
                 <% @play_events.each do |event| %>
                 <% is_joined = user_signed_in? && event.participants.include?(current_user) %>
                 <% is_hosting = user_signed_in? && current_user == event.host %>
+                <% has_pending_request = user_signed_in? && JoinRequest.exists?(user: current_user, play_event: event, status: 'pending') %>
 
                 <!-- Different card styling based on user participation -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden 
                      <%= is_joined ? 'border-l-4 border-green-500 ring-1 ring-green-200' : 
-                        (is_hosting ? 'border-l-4 border-purple-500' : 'border-l-4 border-blue-500') %> 
+                        (is_hosting ? 'border-l-4 border-purple-500' : 
+                        (has_pending_request ? 'border-l-4 border-yellow-500' : 'border-l-4 border-blue-500')) %> 
                      hover:shadow-lg transition-shadow duration-300">
                     <div class="p-5">
-                        <!-- Card header with status badge for joined events -->
+                        <!-- Card header with status badge -->
                         <div class="flex justify-between items-start mb-3">
                             <h2 class="text-xl font-semibold text-gray-800"><%= event.sport.name %></h2>
                             <% if is_joined %>
                             <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Joined</span>
                             <% elsif is_hosting %>
                             <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">Hosting</span>
+                            <% elsif has_pending_request %>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">Request Pending</span>
                             <% end %>
                         </div>
 
@@ -60,6 +92,24 @@
 
                         <div class="flex justify-between items-center mt-4">
                             <%= link_to 'View Details', play_event_path(event), class: "text-blue-500 hover:text-blue-700 font-medium inline-flex items-center" %>
+
+                            <% if user_signed_in? && !is_joined && !is_hosting && !has_pending_request %>
+                            <button onclick="toggleRequestForm(<%= event.id %>)" class="text-blue-500 hover:text-blue-700 font-medium">
+                                Request to Join
+                            </button>
+                            <% end %>
+                        </div>
+
+                        <!-- Hidden join request form -->
+                        <div id="request-form-<%= event.id %>" class="hidden mt-4 bg-gray-50 p-3 rounded-md">
+                            <%= form_with url: play_event_join_requests_path(event), method: :post, local: true do |f| %>
+                            <div class="mb-3">
+                                <%= f.label :message, "Message for host (optional)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+                                <%= f.text_area :message, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500", rows: 2, placeholder: "Example: I'd love to join your event!" %>
+                            </div>
+                            <%= f.submit "Send Request", class: "bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md text-sm" %>
+                            <button type="button" onclick="toggleRequestForm(<%= event.id %>)" class="ml-2 text-gray-500 hover:text-gray-700">Cancel</button>
+                            <% end %>
                         </div>
 
                         <!-- Show edit/delete options only for the host -->
@@ -75,10 +125,11 @@
             </div>
         </div>
 
-        <!-- Sidebar - Joined Events (25% width) -->
+        <!-- Sidebar - Joined Events and Pending Requests (25% width) -->
         <div class="w-full md:w-1/4 mt-8 md:mt-0">
             <% if user_signed_in? %>
-            <div class="bg-white rounded-lg shadow-md p-5">
+            <!-- Joined Events Section -->
+            <div class="bg-white rounded-lg shadow-md p-5 mb-6">
                 <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Your Joined Events</h2>
 
                 <% if @joined_events && @joined_events.any? %>
@@ -100,6 +151,26 @@
                 <p class="text-gray-500 italic">You haven't joined any events yet.</p>
                 <% end %>
             </div>
+
+            <!-- Pending Join Requests Section -->
+            <div class="bg-white rounded-lg shadow-md p-5">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Your Pending Requests</h2>
+
+                <% if @user_pending_requests && @user_pending_requests.any? %>
+                <div class="space-y-4">
+                    <% @user_pending_requests.each do |request| %>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded p-3">
+                        <h3 class="font-medium text-gray-800"><%= request.play_event.sport.name %></h3>
+                        <p class="text-sm text-gray-600"><%= request.play_event.event_start_time.strftime("%b %d, %I:%M %p") %></p>
+                        <p class="text-sm text-gray-600 truncate"><%= request.play_event.event_location %></p>
+                        <p class="text-xs text-yellow-600 mt-1">Request sent <%= time_ago_in_words(request.created_at) %> ago</p>
+                    </div>
+                    <% end %>
+                </div>
+                <% else %>
+                <p class="text-gray-500 italic">You don't have any pending requests.</p>
+                <% end %>
+            </div>
             <% else %>
             <div class="bg-white rounded-lg shadow-md p-5">
                 <h2 class="text-xl font-semibold mb-4 text-gray-800">Your Events</h2>
@@ -109,3 +180,11 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript for toggling request forms -->
+<script>
+    function toggleRequestForm(eventId) {
+        const form = document.getElementById(`request-form-${eventId}`);
+        form.classList.toggle('hidden');
+    }
+</script>
