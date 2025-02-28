@@ -1,16 +1,19 @@
 class PlayEvent < ApplicationRecord
   belongs_to :sport
-  belongs_to :host, class_name: 'User', foreign_key: 'host_id' # Added class name and foreign key
-  has_many :event_participants
+  belongs_to :host, class_name: 'User', foreign_key: 'host_id'
+  has_many :event_participants, dependent: :destroy
   has_many :participants, through: :event_participants, source: :user
 
   validates :sport_type, inclusion: { in: %w(Regular Tournament) }
   validates :event_category, inclusion: { in: %w(Beginner Intermediate Professional) }
   validates :event_start_time, presence: true
   validates :event_end_time, presence: true
-  validates :event_date, presence: true
   validate :start_time_before_end_time
-  validate :date_is_future
+  validate :start_time_is_future
+
+  def full?
+    event_capacity.present? && participants.count >= event_capacity
+  end
 
   private
 
@@ -20,17 +23,15 @@ class PlayEvent < ApplicationRecord
     end
   end
 
-  def date_is_future
-    if event_date.present? && event_date < Date.today
-      errors.add(:event_date, "must be a future date")
+  def start_time_is_future
+    if event_start_time.present? && event_start_time < Time.now
+      errors.add(:event_start_time, "must be a future time")
     end
   end
 
   def event_timeline
-    if event_date && event_start_time
-      event_date.to_datetime.change(hour: event_start_time.hour, min: event_start_time.min, sec: event_start_time.sec)
-    else
-      nil
-    end
+    event_start_time
   end
+
+  
 end
