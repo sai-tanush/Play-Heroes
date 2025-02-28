@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     resources :play_events do
       member do
         post 'join'
+        delete 'leave'
       end
     end
     
