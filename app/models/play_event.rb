@@ -3,6 +3,8 @@ class PlayEvent < ApplicationRecord
   belongs_to :host, class_name: 'User', foreign_key: 'host_id'
   has_many :event_participants, dependent: :destroy
   has_many :participants, through: :event_participants, source: :user
+  has_many :join_requests, dependent: :destroy
+  has_many :pending_requests, -> { where(status: 'pending') }, class_name: 'JoinRequest'
 
   validates :sport_type, inclusion: { in: %w(Regular Tournament) }
   validates :event_category, inclusion: { in: %w(Beginner Intermediate Professional) }
