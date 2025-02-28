@@ -8,7 +8,14 @@
         <% end %>
     </div>
 
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <% is_joined = user_signed_in? && @play_event.participants.include?(current_user) %>
+    <% is_hosting = user_signed_in? && current_user == @play_event.host %>
+    <% has_pending_request = user_signed_in? && JoinRequest.exists?(user: current_user, play_event: @play_event, status: 'pending') %>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden
+        <%= is_joined ? 'border-l-4 border-green-500' : 
+           (is_hosting ? 'border-l-4 border-purple-500' : 
+           (has_pending_request ? 'border-l-4 border-yellow-500' : '')) %>">
         <!-- Event Header -->
         <div class="p-6 border-b">
             <div class="flex flex-col md:flex-row md:justify-between md:items-center">
@@ -17,23 +24,52 @@
                     <p class="text-gray-600 mt-2">Hosted by <%= @play_event.host.email %></p>
                 </div>
 
-                <!-- Join/Leave buttons only appear here -->
-                <% if user_signed_in? && current_user != @play_event.host %>
+                <!-- Status Badges -->
                 <div class="mt-4 md:mt-0">
+                    <% if is_joined %>
+                    <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full mb-2 inline-block">You're Participating</span>
+                    <% elsif is_hosting %>
+                    <span class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full mb-2 inline-block">You're Hosting</span>
+                    <% elsif has_pending_request %>
+                    <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full mb-2 inline-block">Request Pending</span>
+                    <% end %>
+
+                    <!-- Join/Request/Leave buttons -->
+                    <% if user_signed_in? && current_user != @play_event.host %>
                     <% if @play_event.participants.include?(current_user) %>
                     <%= button_to leave_play_event_path(@play_event), method: :delete, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg" do %>
                     Leave Event
                     <% end %>
+                    <% elsif has_pending_request %>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                        <p class="text-yellow-800 text-sm">Your request is pending approval</p>
+                        <%= button_to 'Cancel Request', cancel_join_request_path(@play_event), method: :delete, class: "mt-2 text-yellow-700 underline text-sm" %>
+                    </div>
                     <% elsif !@play_event.full? %>
-                    <%= button_to join_play_event_path(@play_event), method: :post, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg" do %>
-                    Join Event
-                    <% end %>
+                    <button onclick="toggleRequestForm()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg">
+                        Request to Join
+                    </button>
                     <% else %>
                     <p class="text-red-500 font-medium">This event is full</p>
                     <% end %>
+                    <% end %>
                 </div>
-                <% end %>
             </div>
+        </div>
+
+        <!-- Request Form (hidden by default) -->
+        <div id="request-form" class="hidden p-6 bg-gray-50 border-b">
+            <%= form_with url: play_event_join_requests_path(@play_event), method: :post, local: true do |f| %>
+            <div class="mb-3">
+                <h3 class="font-semibold text-gray-800 mb-2">Request to join this event</h3>
+                <%= f.label :message, "Message for host (optional)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+                <%= f.text_area :message, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500", rows: 3, placeholder: "Example: I'd love to join your event!" %>
+            </div>
+            <div class="flex space-x-3">
+                <%= f.submit "Send Request", class: "bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md text-sm" %>
+                <button type="button" onclick="toggleRequestForm()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-md text-sm">Cancel</button>
+            </div>
+            <% end %>
         </div>
 
         <!-- Event Details -->
@@ -114,9 +150,10 @@
                     <% end %>
                 </div>
 
-                <!-- Right Column - Participants -->
+                <!-- Right Column - Participants and Join Requests -->
                 <div>
-                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <!-- Participants Section -->
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
                         <h2 class="text-xl font-semibold mb-3 text-gray-800">Participants</h2>
 
                         <% if @participants.any? %>
@@ -127,6 +164,9 @@
                                     <%= participant.email.first.upcase %>
                                 </div>
                                 <span class="text-gray-800 text-sm"><%= participant.email %></span>
+                                <% if participant == @play_event.host %>
+                                <span class="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">Host</span>
+                                <% end %>
                             </div>
                             <% end %>
                         </div>
@@ -134,8 +174,50 @@
                         <p class="text-gray-500 italic">No participants have joined yet.</p>
                         <% end %>
                     </div>
+
+                    <!-- Join Requests Section (Only visible to host) -->
+                    <% if is_hosting && @pending_requests && @pending_requests.any? %>
+                    <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                        <h2 class="text-xl font-semibold mb-3 text-gray-800">Join Requests</h2>
+
+                        <div class="space-y-3">
+                            <% @pending_requests.each do |request| %>
+                            <div class="bg-white rounded-md shadow-sm p-3">
+                                <div class="flex items-center mb-2">
+                                    <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 mr-2">
+                                        <%= request.user.email.first.upcase %>
+                                    </div>
+                                    <span class="text-gray-800 font-medium"><%= request.user.email %></span>
+                                </div>
+
+                                <% if request.message.present? %>
+                                <div class="bg-gray-50 p-2 rounded text-sm italic text-gray-600 mb-3">
+                                    "<%= request.message %>"
+                                </div>
+                                <% end %>
+
+                                <div class="text-xs text-gray-500 mb-2">
+                                    Requested <%= time_ago_in_words(request.created_at) %> ago
+                                </div>
+
+                                <div class="flex space-x-2">
+                                    <%= button_to 'Accept', accept_join_request_path(request), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white text-sm py-1 px-3 rounded" %>
+                                    <%= button_to 'Reject', reject_join_request_path(request), method: :patch, class: "bg-red-500 hover:bg-red-600 text-white text-sm py-1 px-3 rounded" %>
+                                </div>
+                            </div>
+                            <% end %>
+                        </div>
+                    </div>
+                    <% end %>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function toggleRequestForm() {
+        const form = document.getElementById('request-form');
+        form.classList.toggle('hidden');
+    }
+</script>
