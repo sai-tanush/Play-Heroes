@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  play_event: one
+  status: MyString
+  message: MyText
+
+two:
+  user: two
+  play_event: two
+  status: MyString
+  message: MyText
