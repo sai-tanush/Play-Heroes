@@ -1,25 +1,111 @@
-<div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-6">Upcoming Events</h1>
+<div class="container mx-auto p-6 bg-gray-50">
+    <h1 class="text-3xl font-bold mb-8 text-center text-blue-600">Sports Events</h1>
 
-    <div class="mb-4">
-        <%= link_to 'Create New Event', new_play_event_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+    <div class="mb-6 flex justify-center">
+        <%= link_to 'Create New Event', new_play_event_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 transform hover:-translate-y-1" %>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <% @play_events.each do |event| %>
-        <div class="bg-white rounded-lg shadow p-4">
-            <h2 class="text-xl font-semibold mb-2"><%= event.sport.name %></h2>
-            <p class="text-gray-600 mb-1">Date: <%= event.event_date %></p>
-            <p class="text-gray-600 mb-1">Time: <%= event.event_start_time.strftime("%I:%M %p") %> - <%= event.event_end_time.strftime("%I:%M %p") %></p>
-            <p class="text-gray-600 mb-1">Location: <%= event.event_location %></p>
-            <%= link_to 'View Details', play_event_path(event), class: "text-blue-500 hover:underline" %>
-            <% if user_signed_in? && current_user == event.host %>
-            <div class="mt-2">
-                <%= link_to 'Edit', edit_play_event_path(event), class: "text-green-500 hover:underline mr-2" %>
-                <%= button_to 'Delete', play_event_path(event), method: :delete, data: { confirm: 'Are you sure?' }, class: "text-red-500 hover:underline" %>
+    <div class="flex flex-col md:flex-row">
+        <!-- Main content - Upcoming Events (75% width) -->
+        <div class="w-full md:w-3/4 md:pr-6">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">Upcoming Events</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <% @play_events.each do |event| %>
+                <% is_joined = user_signed_in? && event.participants.include?(current_user) %>
+                <% is_hosting = user_signed_in? && current_user == event.host %>
+
+                <!-- Different card styling based on user participation -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden 
+                     <%= is_joined ? 'border-l-4 border-green-500 ring-1 ring-green-200' : 
+                        (is_hosting ? 'border-l-4 border-purple-500' : 'border-l-4 border-blue-500') %> 
+                     hover:shadow-lg transition-shadow duration-300">
+                    <div class="p-5">
+                        <!-- Card header with status badge for joined events -->
+                        <div class="flex justify-between items-start mb-3">
+                            <h2 class="text-xl font-semibold text-gray-800"><%= event.sport.name %></h2>
+                            <% if is_joined %>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Joined</span>
+                            <% elsif is_hosting %>
+                            <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">Hosting</span>
+                            <% end %>
+                        </div>
+
+                        <p class="text-gray-600 mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <%= event.event_start_time.strftime("%B %d, %Y") %>
+                        </p>
+                        <p class="text-gray-600 mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <%= event.event_start_time.strftime("%I:%M %p") %> - <%= event.event_end_time.strftime("%I:%M %p") %>
+                        </p>
+                        <p class="text-gray-600 mb-3 flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <%= event.event_location %>
+                        </p>
+
+                        <!-- Capacity info -->
+                        <% if event.event_capacity.present? %>
+                        <p class="text-sm text-gray-500 mb-3">
+                            <span class="font-medium"><%= event.participants.count %>/<%= event.event_capacity %></span> spots filled
+                        </p>
+                        <% end %>
+
+                        <div class="flex justify-between items-center mt-4">
+                            <%= link_to 'View Details', play_event_path(event), class: "text-blue-500 hover:text-blue-700 font-medium inline-flex items-center" %>
+                        </div>
+
+                        <!-- Show edit/delete options only for the host -->
+                        <% if is_hosting %>
+                        <div class="mt-4 flex space-x-4">
+                            <%= link_to 'Edit', edit_play_event_path(event), class: "text-green-500 hover:text-green-700 font-medium" %>
+                            <%= button_to 'Delete', play_event_path(event), method: :delete, data: { confirm: 'Are you sure?' }, class: "text-red-500 hover:text-red-700 font-medium" %>
+                        </div>
+                        <% end %>
+                    </div>
+                </div>
+                <% end %>
+            </div>
+        </div>
+
+        <!-- Sidebar - Joined Events (25% width) -->
+        <div class="w-full md:w-1/4 mt-8 md:mt-0">
+            <% if user_signed_in? %>
+            <div class="bg-white rounded-lg shadow-md p-5">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Your Joined Events</h2>
+
+                <% if @joined_events && @joined_events.any? %>
+                <div class="space-y-4">
+                    <% @joined_events.each do |event| %>
+                    <div class="bg-green-50 border-l-4 border-green-500 rounded p-3">
+                        <h3 class="font-medium text-gray-800"><%= event.sport.name %></h3>
+                        <p class="text-sm text-gray-600"><%= event.event_start_time.strftime("%b %d, %I:%M %p") %></p>
+                        <p class="text-sm text-gray-600 truncate"><%= event.event_location %></p>
+                        <div class="mt-2">
+                            <%= link_to play_event_path(event), class: "w-full bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium text-center py-1 px-3 rounded block" do %>
+                            View Details
+                            <% end %>
+                        </div>
+                    </div>
+                    <% end %>
+                </div>
+                <% else %>
+                <p class="text-gray-500 italic">You haven't joined any events yet.</p>
+                <% end %>
+            </div>
+            <% else %>
+            <div class="bg-white rounded-lg shadow-md p-5">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Your Events</h2>
+                <p class="text-gray-500"><%= link_to 'Sign in', new_user_session_path, class: "text-blue-500" %> to see events you've joined.</p>
             </div>
             <% end %>
         </div>
-        <% end %>
     </div>
 </div>
