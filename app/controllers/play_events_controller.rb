@@ -7,7 +7,7 @@ class PlayEventsController < ApplicationController
                            .order(event_start_time: :asc)
                            
     if user_signed_in?
-      @joined_events = current_user.joined_events.order(event_start_time: :asc)
+      @joined_events = current_user.joined_events.where('event_end_time > ?', Time.current).order(event_start_time: :asc)
       @user_pending_requests = current_user.join_requests.where(status: 'pending')
       @pending_host_requests = JoinRequest.joins(:play_event)
                                         .where(status: 'pending')
@@ -31,8 +31,10 @@ class PlayEventsController < ApplicationController
     @play_event.host = current_user
     
     if @play_event.save
-      redirect_to @play_event, notice: 'Event created successfully.'
+      flash[:success] = 'Event created successfully.'
+      redirect_to @play_event
     else
+      flash[:error] = 'Failed to create event.'
       render :new
     end
   end
