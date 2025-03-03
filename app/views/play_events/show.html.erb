@@ -41,10 +41,6 @@
                     Leave Event
                     <% end %>
                     <% elsif has_pending_request %>
-                    <!--<div class="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-                        <p class="text-yellow-800 text-sm">Your request is pending approval</p>
-                        <%= button_to 'Cancel Request', cancel_join_request_path(@play_event), method: :delete, class: "mt-2 text-yellow-700 underline text-sm" %>
-                </div> -->
                     <% elsif !@play_event.full? %>
                     <button onclick="toggleRequestForm()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg">
                         Request to Join
