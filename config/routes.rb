@@ -1,15 +1,6 @@
 Rails.application.routes.draw do
-  get "play_events/index"
-  get "play_events/show"
-  get "play_events/new"
-  get "play_events/create"
-  get "play_events/edit"
-  get "play_events/update"
-  get "play_events/destroy"
-  get "play_events/join"
-  resources :sports
   devise_for :users
-  get "home/index"
+
   root "home#index"
 
   authenticate :user do
@@ -19,9 +10,10 @@ Rails.application.routes.draw do
     get "/profile", to: "users#profile"
     get "/profile/edit", to: "users#edit", as: "edit_profile"
     patch "/profile", to: "users#update", as: :update_profile
-    
+
     resources :posts, only: [:index, :new, :create, :destroy] do
       resources :comments, only: [:create, :destroy]
+      post :like, on: :member # Simplified like route
     end
 
     resources :play_events do
@@ -29,11 +21,10 @@ Rails.application.routes.draw do
         post 'join'
         delete 'leave'
       end
-      
-      # Nested join_requests routes
+
       resources :join_requests, only: [:create] do
         collection do
-          delete :cancel, as: :cancel # This adds the cancel_join_request_path
+          delete :cancel, as: :cancel
         end
       end
     end
@@ -44,7 +35,7 @@ Rails.application.routes.draw do
         patch :reject
       end
     end
-
-    post "/posts/:id/like", to: "posts#like", as: :like_post
   end
+
+  resources :sports
 end
