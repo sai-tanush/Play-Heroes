@@ -8,9 +8,21 @@ class PlayEventsController < ApplicationController
     
     # Get only events that haven't started yet (comparing full datetime)
     @play_events = PlayEvent.where('event_start_time > ?', now).order(event_start_time: :asc)
-    
-    # For debugging, you can print the SQL that's being generated
-    puts "Query SQL: #{PlayEvent.where('event_start_time > ?', now).to_sql}"
+
+     # Filters
+     if params[:date].present?
+      date = Date.parse(params[:date])
+      @play_events = @play_events.where('DATE(event_start_time) = ?', date)
+    end
+
+    if params[:sport_name].present?
+      @play_events = @play_events.joins(:sport).where('LOWER(sports.name) LIKE ?', "%#{params[:sport_name].downcase}%")
+    end
+
+    if params[:location].present?
+      @play_events = @play_events.where('LOWER(event_location) LIKE ?', "%#{params[:location].downcase}%")
+    end   
+
     
     if user_signed_in?
       # Same filtering for joined events
