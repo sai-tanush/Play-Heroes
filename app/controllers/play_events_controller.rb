@@ -3,15 +3,20 @@ class PlayEventsController < ApplicationController
   before_action :set_play_event, only: [:show, :edit, :update, :destroy, :join, :leave]
   
   def index
-    @play_events = PlayEvent.where('event_start_time >= ?', DateTime.now)
-                           .order(event_start_time: :asc)
-                           
+    # Current datetime for comparison
+    now = Time.current
+    
+    # Get only events that haven't started yet (comparing full datetime)
+    @play_events = PlayEvent.where('event_start_time > ?', now).order(event_start_time: :asc)
+    
+    # For debugging, you can print the SQL that's being generated
+    puts "Query SQL: #{PlayEvent.where('event_start_time > ?', now).to_sql}"
+    
     if user_signed_in?
-      @joined_events = current_user.joined_events.where('event_end_time > ?', Time.current).order(event_start_time: :asc)
+      # Same filtering for joined events
+      @joined_events = current_user.joined_events.where('event_start_time > ?', now).order(event_start_time: :asc)
       @user_pending_requests = current_user.join_requests.where(status: 'pending')
-      @pending_host_requests = JoinRequest.joins(:play_event)
-                                        .where(status: 'pending')
-                                        .where(play_events: { host_id: current_user.id })
+      @pending_host_requests = JoinRequest.joins(:play_event).where(play_events: { host_id: current_user.id }, status: 'pending')
     end
   end
   
