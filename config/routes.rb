@@ -20,6 +20,9 @@ Rails.application.routes.draw do
       member do
         post 'join'
         delete 'leave'
+
+        post 'create_chat' 
+        get 'event_chat'
       end
 
       resources :join_requests, only: [:create] do
