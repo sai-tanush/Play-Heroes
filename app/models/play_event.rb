@@ -5,6 +5,7 @@ class PlayEvent < ApplicationRecord
   has_many :participants, through: :event_participants, source: :user
   has_many :join_requests, dependent: :destroy
   has_many :pending_requests, -> { where(status: 'pending') }, class_name: 'JoinRequest'
+  has_many :event_chats, dependent: :destroy
 
   validates :sport_type, inclusion: { in: %w(Regular Tournament) }
   validates :event_category, inclusion: { in: %w(Beginner Intermediate Professional) }
@@ -15,6 +16,10 @@ class PlayEvent < ApplicationRecord
 
   def full?
     event_capacity.present? && participants.count >= event_capacity
+  end
+
+  def chat_active?
+    Time.current < event_start_time
   end
 
   private
