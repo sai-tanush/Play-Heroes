@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_03_142141) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_05_023559) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -48,6 +48,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_142141) do
     t.datetime "updated_at", null: false
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "event_chats", force: :cascade do |t|
+    t.integer "play_event_id", null: false
+    t.integer "user_id", null: false
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["play_event_id"], name: "index_event_chats_on_play_event_id"
+    t.index ["user_id"], name: "index_event_chats_on_user_id"
   end
 
   create_table "event_participants", force: :cascade do |t|
@@ -154,6 +164,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_142141) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
+  add_foreign_key "event_chats", "play_events"
+  add_foreign_key "event_chats", "users"
   add_foreign_key "event_participants", "play_events"
   add_foreign_key "event_participants", "users"
   add_foreign_key "join_requests", "play_events"
