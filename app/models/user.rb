@@ -15,4 +15,5 @@ class User < ApplicationRecord
   has_many :hosted_events, class_name: 'PlayEvent', foreign_key: 'host_id'
   has_many :join_requests, dependent: :destroy
   has_many :pending_sent_requests, -> { where(status: 'pending') }, class_name: 'JoinRequest'
+  has_many :event_chats
 end
