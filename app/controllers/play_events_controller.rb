@@ -1,6 +1,6 @@
 class PlayEventsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show] # Require login except index and show
-  before_action :set_play_event, only: [:show, :edit, :update, :destroy, :join, :leave]
+  before_action :set_play_event, only: [:show, :edit, :update, :destroy, :join, :leave, :create_chat]
   
   def index
     # Current datetime for comparison
@@ -37,6 +37,10 @@ class PlayEventsController < ApplicationController
     @is_host = user_signed_in? && current_user == @play_event.host
     @is_participant = user_signed_in? && @play_event.participants.include?(current_user)
     @has_pending_request = user_signed_in? && JoinRequest.exists?(user: current_user, play_event: @play_event, status: 'pending')
+
+    if @is_participant
+      @event_chats = @play_event.event_chats.order(created_at: :desc).limit(50)
+    end
   end
   
   def new
@@ -107,6 +111,36 @@ class PlayEventsController < ApplicationController
       redirect_to play_events_path, alert: 'You are not a participant in this event.'
     end
   end
+
+  def create_chat
+    # Ensure user is signed in
+    unless user_signed_in?
+      return redirect_to @play_event, alert: 'You must be signed in to chat.'
+    end
+
+    # Check if user is a participant
+    unless @play_event.participants.include?(current_user)
+      return redirect_to @play_event, alert: 'You must be a participant to chat.'
+    end
+
+    # Check if event chat is still active (before event start)
+    unless @play_event.event_start_time > Time.current
+      return redirect_to @play_event, alert: 'Chat is no longer available.'
+    end
+
+    # Create new chat message
+    @event_chat = @play_event.event_chats.build(
+      user: current_user,
+      message: params[:event_chat][:message]
+    )
+
+    if @event_chat.save
+      redirect_to @play_event, notice: 'Message sent successfully.'
+    else
+      redirect_to @play_event, alert: 'Failed to send message.'
+    end
+  end
+
   
   private
   
