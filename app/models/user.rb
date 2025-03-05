@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_many :post_likes, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :event_participants
+  has_many :play_events
   has_many :joined_events, through: :event_participants, source: :play_event
   has_many :hosted_events, class_name: 'PlayEvent', foreign_key: 'host_id'
   has_many :join_requests, dependent: :destroy
