@@ -9,6 +9,11 @@ class UsersController < ApplicationController
     # user already set before action
   end
 
+  def profile
+    @upcoming_events = current_user.play_events.where("event_start_time > ?", Time.now)
+    @joined_events = current_user.joined_events.where("event_start_time > ?", Time.now)
+  end
+
   def update
     if @user.update(user_params)
       redirect_to profile_path, notice: 'Profile updated successfully.'
