@@ -17,7 +17,7 @@ gem "bootsnap", require: false
 gem "kamal", require: false
 gem "thruster", require: false
 gem "tailwindcss-ruby", "~> 4.0"
-gem "tailwindcss-rails", "~> 4.0"
+gem "tailwindcss-rails", "~> 4.2"
 gem 'devise'
 
 group :development, :test do
